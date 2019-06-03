@@ -34,7 +34,7 @@ def on_update(delta_time):
         player_x -= 5
 
     # Gravity
-    if up_pressed is True and on_plat is False:
+    if up_pressed is True:
         velocity += gravity
         player_y -= velocity
 
@@ -51,34 +51,28 @@ def on_update(delta_time):
     # creates boundaries for platforms
     '''
     if 280 <= player_x <= 520 and 175 <= player_y <= 225:
-        if player_y > 175:
-            player_y = 175
-        elif player_y < 225:
-            player_y = 225
+        if player_y == 175:
+            player_y = player_y - 5
+        elif player_y == 225:
+            player_y = player_y + 5
 
-        if player_x > 280:
-            player_x = 280
-        elif player_x < 520:
-            player_x = 520
+         if player_x == 280:
+            player_x = player_x - 5
+        elif player_x == 520:
+            player_x = player_x + 5
+       
     '''
 
-    if 280 <= player_x <= 520 and 175 <= player_y <= 225:
-        if player_y > 175:
-            player_y = 175
-            on_plat = True
-        elif player_y < 225:
-            player_y = 225
-            on_plat = True
+    if 280 <= player_x <= 520 and 171 <= player_y <= 231:
+        if player_y > 170:
+            player_y = 170
+        if player_y < 230:
+            player_y = 230
 
-        if player_x > 280:
+        if player_x < 280:
             player_x = 280
-            on_plat = True
-        elif player_x < 520:
+        if player_x > 520:
             player_x = 520
-            on_plat = True
-
-    else:
-        on_plat = False
 
 
 def on_draw():

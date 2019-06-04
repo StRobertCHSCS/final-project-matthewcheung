@@ -16,14 +16,15 @@ right_pressed = False
 
 # Gravity variables
 velocity = 0
-gravity = 0.13
+gravity = 0.2
 on_plat = False
 
 
 def on_update(delta_time):
     global up_pressed, down_pressed, right_pressed, left_pressed, player_x, player_y, velocity, gravity, on_plat
+
     if up_pressed:
-        player_y += 5
+        player_y += 8
     else:
         velocity = 0
     if down_pressed:
@@ -48,31 +49,55 @@ def on_update(delta_time):
     if player_x >= 775:
         player_x = 775
 
-    # creates boundaries for platforms
-    '''
-    if 280 <= player_x <= 520 and 175 <= player_y <= 225:
-        if player_y == 175:
-            player_y = player_y - 5
-        elif player_y == 225:
-            player_y = player_y + 5
+    platforms()
 
-         if player_x == 280:
-            player_x = player_x - 5
-        elif player_x == 520:
-            player_x = player_x + 5
-       
-    '''
 
-    if 280 <= player_x <= 520 and 171 <= player_y <= 231:
-        if player_y > 170:
-            player_y = 170
-        if player_y < 230:
-            player_y = 230
+def platforms():
+    global player_x, player_y
 
-        if player_x < 280:
-            player_x = 280
-        if player_x > 520:
-            player_x = 520
+    if (480 <= player_x <= 720 and 270 <= player_y <= 300) and player_y + 1 >= 270:
+        player_y = 270
+    if (480 <= player_x <= 720 and 300 <= player_y <= 330) and player_y - 1 <= 330:
+        player_y = 330
+
+    if (480 <= player_x <= 720 and 270 <= player_y <= 330) and player_x + 1 <= 480:
+        player_x = 480
+    if (480 <= player_x <= 720 and 270 <= player_y <= 330) and player_x - 1 >= 720:
+        player_x = 720
+
+    if (280 <= player_x <= 520 and 170 <= player_y <= 200) and player_y + 1 >= 170:
+        player_y = 170
+    if (280 <= player_x <= 520 and 200 <= player_y <= 230) and player_y - 1 <= 230:
+        player_y = 230
+
+    if (280 <= player_x <= 520 and 170 <= player_y <= 230) and player_x + 1 <= 280:
+        player_x = 280
+    if (280 <= player_x <= 520 and 170 <= player_y <= 230) and player_x - 1 >= 520:
+        player_x = 520
+
+    if (80 <= player_x <= 320 and 70 <= player_y <= 100) and player_y + 1 >= 70:
+        player_y = 70
+    if (80 <= player_x <= 320 and 100 <= player_y <= 130) and player_y - 1 <= 130:
+        player_y = 130
+
+    if (80 <= player_x <= 320 and 70 <= player_y <= 130) and player_x + 1 <= 80:
+        player_x = 80
+    if (80 <= player_x <= 320 and 70 <= player_y <= 130) and player_x - 1 >= 320:
+        player_x = 320
+
+
+'''
+for i in range(len(amount_of_plats):
+    if (left_edge <= player_x <= right_edge and bottom_plat <= player_y <= top_plat) and player_y + 1 >= bottom_plat:
+        player_y = bottom_plat
+'''
+
+'''
+def jumped():
+    global on_plat
+
+    if up_pressed and on_plat:
+'''
 
 
 def on_draw():
@@ -80,8 +105,10 @@ def on_draw():
     arcade.start_render()
     arcade.draw_circle_filled(player_x, player_y, 25, arcade.color.RED)
 
-    # Draws platforms
+    arcade.draw_rectangle_filled(600, 300, 200, 10, arcade.color.BLACK)
     arcade.draw_rectangle_filled(400, 200, 200, 10, arcade.color.BLACK)
+    arcade.draw_rectangle_filled(200, 100, 200, 10, arcade.color.BLACK)
+
 
 
 def on_key_press(key, something):
@@ -109,7 +136,7 @@ def on_key_release(key, something):
 
 def setup():
     arcade.open_window(WIDTH, HEIGHT, "Final Project")
-    arcade.set_background_color(arcade.color.WHITE)
+    arcade.set_background_color(arcade.color.BLUE_GRAY)
     arcade.schedule(on_update, 1/60)
 
     window = arcade.get_window()

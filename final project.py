@@ -18,47 +18,54 @@ right_pressed = False
 velocity = 0
 gravity = 0.2
 on_plat = False
+jumping = False
 
 
 def on_update(delta_time):
-    global up_pressed, down_pressed, right_pressed, left_pressed, player_x, player_y, velocity, gravity, on_plat
-
-    if up_pressed:
-        player_y += 8
-    else:
-        velocity = 0
+    global up_pressed, down_pressed, right_pressed, left_pressed, player_x, player_y, velocity, gravity
     if down_pressed:
         player_y -= 5
     if right_pressed:
         player_x += 5
     if left_pressed:
         player_x -= 5
-
+    '''
     # Gravity
-    if up_pressed is True:
+    if up_pressed:
         velocity += gravity
         player_y -= velocity
+    '''
+
+    jumped()
+    platforms()
+
+
+
+def platforms():
+    global player_x, player_y, on_plat
 
     # Stops player from leaving the screen
     if player_y >= 575:
         player_y = 575
     if player_y <= 25:
         player_y = 25
+        on_plat = True
+    else:
+        on_plat = False
+
     if player_x <= 25:
         player_x = 25
     if player_x >= 775:
         player_x = 775
 
-    platforms()
-
-
-def platforms():
-    global player_x, player_y
-
+    # Platform collisions
     if (480 <= player_x <= 720 and 270 <= player_y <= 300) and player_y + 1 >= 270:
         player_y = 270
     if (480 <= player_x <= 720 and 300 <= player_y <= 330) and player_y - 1 <= 330:
         player_y = 330
+        on_plat = True
+    else:
+        on_plat = False
 
     if (480 <= player_x <= 720 and 270 <= player_y <= 330) and player_x + 1 <= 480:
         player_x = 480
@@ -69,6 +76,9 @@ def platforms():
         player_y = 170
     if (280 <= player_x <= 520 and 200 <= player_y <= 230) and player_y - 1 <= 230:
         player_y = 230
+        on_plat = True
+    else:
+        on_plat = False
 
     if (280 <= player_x <= 520 and 170 <= player_y <= 230) and player_x + 1 <= 280:
         player_x = 280
@@ -79,6 +89,9 @@ def platforms():
         player_y = 70
     if (80 <= player_x <= 320 and 100 <= player_y <= 130) and player_y - 1 <= 130:
         player_y = 130
+        on_plat = True
+    else:
+        on_plat = False
 
     if (80 <= player_x <= 320 and 70 <= player_y <= 130) and player_x + 1 <= 80:
         player_x = 80
@@ -92,12 +105,22 @@ for i in range(len(amount_of_plats):
         player_y = bottom_plat
 '''
 
-'''
-def jumped():
-    global on_plat
 
-    if up_pressed and on_plat:
-'''
+def jumped():
+    global on_plat, velocity, player_y, jumping
+
+    if up_pressed:
+        jumping = True
+    if on_plat:
+        velocity = 0
+        jumping = False
+
+    if jumping:
+        player_y += 8
+        velocity += gravity
+        player_y -= velocity
+        if velocity >= 20:
+            velocity = 20
 
 
 def on_draw():
@@ -110,7 +133,6 @@ def on_draw():
     arcade.draw_rectangle_filled(200, 100, 200, 10, arcade.color.BLACK)
 
 
-
 def on_key_press(key, something):
     global up_pressed, down_pressed, right_pressed, left_pressed
     if key == arcade.key.W:
@@ -121,6 +143,7 @@ def on_key_press(key, something):
         right_pressed = True
     if key == arcade.key.A:
         left_pressed = True
+
 
 def on_key_release(key, something):
     global up_pressed, down_pressed, right_pressed, left_pressed

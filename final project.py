@@ -40,7 +40,6 @@ def on_update(delta_time):
     platforms()
 
 
-
 def platforms():
     global player_x, player_y, on_plat
 
@@ -111,9 +110,6 @@ def jumped():
 
     if up_pressed:
         jumping = True
-    if on_plat:
-        velocity = 0
-        jumping = False
 
     if jumping:
         player_y += 8
@@ -121,6 +117,10 @@ def jumped():
         player_y -= velocity
         if velocity >= 20:
             velocity = 20
+
+    if on_plat:
+        velocity = 0
+        jumping = False
 
 
 def on_draw():

@@ -40,59 +40,58 @@ def on_update(delta_time):
     platforms()
 
 
-
 def platforms():
     global player_x, player_y, on_plat
 
     # Stops player from leaving the screen
-    if player_y >= 575:
+    if player_y + 1 >= 575:
         player_y = 575
-    if player_y <= 25:
+    if player_y - 1 <= 25:
         player_y = 25
         on_plat = True
     else:
         on_plat = False
 
-    if player_x <= 25:
+    if player_x - 1 <= 25:
         player_x = 25
-    if player_x >= 775:
+    if player_x + 1 >= 775:
         player_x = 775
 
     # Platform collisions
+    # Platform 3 Y collisions
     if (480 <= player_x <= 720 and 270 <= player_y <= 300) and player_y + 1 >= 270:
         player_y = 270
     if (480 <= player_x <= 720 and 300 <= player_y <= 330) and player_y - 1 <= 330:
         player_y = 330
         on_plat = True
-    else:
-        on_plat = False
 
+    # Platform 3 X collisions
     if (480 <= player_x <= 720 and 270 <= player_y <= 330) and player_x + 1 <= 480:
         player_x = 480
     if (480 <= player_x <= 720 and 270 <= player_y <= 330) and player_x - 1 >= 720:
         player_x = 720
 
+    # Platform 2 Y collisions
     if (280 <= player_x <= 520 and 170 <= player_y <= 200) and player_y + 1 >= 170:
         player_y = 170
     if (280 <= player_x <= 520 and 200 <= player_y <= 230) and player_y - 1 <= 230:
         player_y = 230
         on_plat = True
-    else:
-        on_plat = False
 
+    # Platform 2 X collisions
     if (280 <= player_x <= 520 and 170 <= player_y <= 230) and player_x + 1 <= 280:
         player_x = 280
     if (280 <= player_x <= 520 and 170 <= player_y <= 230) and player_x - 1 >= 520:
         player_x = 520
 
+    # Platform 1 Y collisions
     if (80 <= player_x <= 320 and 70 <= player_y <= 100) and player_y + 1 >= 70:
         player_y = 70
     if (80 <= player_x <= 320 and 100 <= player_y <= 130) and player_y - 1 <= 130:
         player_y = 130
         on_plat = True
-    else:
-        on_plat = False
 
+    # Platform 1 X collisions
     if (80 <= player_x <= 320 and 70 <= player_y <= 130) and player_x + 1 <= 80:
         player_x = 80
     if (80 <= player_x <= 320 and 70 <= player_y <= 130) and player_x - 1 >= 320:
@@ -111,9 +110,6 @@ def jumped():
 
     if up_pressed:
         jumping = True
-    if on_plat:
-        velocity = 0
-        jumping = False
 
     if jumping:
         player_y += 8
@@ -121,6 +117,17 @@ def jumped():
         player_y -= velocity
         if velocity >= 20:
             velocity = 20
+
+    if on_plat:
+        velocity = 0
+        jumping = False
+    '''
+    if not on_plat:
+        velocity += gravity
+        player_y -= velocity
+        if velocity >= 20:
+            velocity = 20
+    '''
 
 
 def on_draw():

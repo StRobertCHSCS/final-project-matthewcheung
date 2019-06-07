@@ -121,7 +121,7 @@ def platform_collisions(x, y):
         player_x = x
     if (x <= player_x <= x + 240 and y <= player_y <= y + 60) and player_x - 1 >= x + 240:
         player_x = x + 240
-
+ 
 
 def jumped():
     global on_plat, velocity, player_y, jumping

@@ -20,6 +20,9 @@ gravity = 0.2
 on_plat = False
 jumping = False
 
+# Endgame variables
+victory = False
+
 
 def on_update(delta_time):
     global up_pressed, down_pressed, right_pressed, left_pressed, player_x, player_y, velocity, gravity
@@ -29,12 +32,6 @@ def on_update(delta_time):
         player_x += 5
     if left_pressed:
         player_x -= 5
-    '''
-    # Gravity
-    if up_pressed:
-        velocity += gravity
-        player_y -= velocity
-    '''
 
     jumped()
     platforms()
@@ -121,7 +118,7 @@ def platform_collisions(x, y):
         player_x = x
     if (x <= player_x <= x + 240 and y <= player_y <= y + 60) and player_x - 1 >= x + 240:
         player_x = x + 240
- 
+
 
 def jumped():
     global on_plat, velocity, player_y, jumping
@@ -130,7 +127,7 @@ def jumped():
         jumping = True
 
     if jumping:
-        player_y += 8
+        player_y += 7
         velocity += gravity
         player_y -= velocity
         if velocity >= 20:
@@ -141,7 +138,7 @@ def jumped():
         jumping = False
 
     if not on_plat and not jumping:
-        velocity += 0.3
+        velocity += 0.2
         velocity += gravity
         player_y -= velocity
         if velocity >= 20:
@@ -149,12 +146,13 @@ def jumped():
 
 
 def end_goal():
+    global victory
     if (594 <= player_x <= 656) and (305 <= player_y <= 430):
-        print("you win!")
+        victory = True
 
 
 def on_draw():
-    global player_x, player_y
+    global player_x, player_y, victory
     arcade.start_render()
 
     # Platforms
@@ -170,6 +168,17 @@ def on_draw():
 
     # Character
     arcade.draw_circle_filled(player_x, player_y, 25, arcade.color.RED)
+
+    endgame_text = "Congratulations!"
+    endgame_text_2 = "You Won!"
+    endgame_text_3 = "Click anywhere to continue"
+
+    if victory:
+        arcade.draw_rectangle_filled(400, 300, 350, 250, arcade.color.BATTLESHIP_GREY)
+        arcade.draw_text(endgame_text, 290, 390, arcade.color.YELLOW_GREEN, 20)
+        arcade.draw_text(endgame_text_2, 340, 350, arcade.color.YELLOW_GREEN, 20)
+        arcade.draw_text(endgame_text_3, 240, 200, arcade.color.PINK_LAVENDER, 18)
+
 
 
 def on_key_press(key, something):
@@ -194,7 +203,9 @@ def on_key_release(key, something):
         right_pressed = False
     if key == arcade.key.A:
         left_pressed = False
-
+'''
+def on_mouse_press()
+'''
 
 def setup():
     arcade.open_window(WIDTH, HEIGHT, "Final Project")

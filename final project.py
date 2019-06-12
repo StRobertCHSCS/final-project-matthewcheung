@@ -20,6 +20,14 @@ gravity = 0.2
 on_plat = False
 jumping = False
 
+# Endgame variables
+victory = False
+level_1 = True
+level_2 = False
+
+# Camera variables
+cam_vars = [0, 800, 0, 600]
+
 
 def on_update(delta_time):
     global up_pressed, down_pressed, right_pressed, left_pressed, player_x, player_y, velocity, gravity
@@ -29,80 +37,82 @@ def on_update(delta_time):
         player_x += 5
     if left_pressed:
         player_x -= 5
-    '''
-    # Gravity
-    if up_pressed:
-        velocity += gravity
-        player_y -= velocity
-    '''
 
     jumped()
-    platforms()
+
+    if level_1:
+        level_1_platforms()
+    if level_2:
+        cam_vars[0] += 5
+        cam_vars[1] += 5
+        if cam_vars[0] >= 40:
+            cam_vars[0] += 0
+            cam_vars[1] += 0
+        level_2_platforms()
+
+    end_goal()
+    camera()
 
 
-def platforms():
+def level_1_platforms():
     global player_x, player_y, on_plat
 
     # Stops player from leaving the screen
-    if player_y >= 575:
+    if player_y + 1 >= 575:
         player_y = 575
-    if player_y <= 25:
+    if player_y - 1 <= 25:
         player_y = 25
         on_plat = True
     else:
         on_plat = False
 
-    if player_x <= 25:
+    if player_x - 1 <= 25:
         player_x = 25
-    if player_x >= 775:
-        player_x = 775
+
 
     # Platform collisions
-    if (480 <= player_x <= 720 and 270 <= player_y <= 300) and player_y + 1 >= 270:
+    # Platform 3 Y collisions
+    if (530 <= player_x <= 670 and 270 <= player_y <= 300) and player_y + 1 >= 270:
         player_y = 270
-    if (480 <= player_x <= 720 and 300 <= player_y <= 330) and player_y - 1 <= 330:
+    if (530 <= player_x <= 670 and 300 <= player_y <= 330) and player_y - 1 <= 330:
         player_y = 330
         on_plat = True
-    else:
-        on_plat = False
 
-    if (480 <= player_x <= 720 and 270 <= player_y <= 330) and player_x + 1 <= 480:
+    # Platform 3 X collisions
+    if (530 <= player_x <= 670 and 270 <= player_y <= 330) and player_x + 1 <= 480:
         player_x = 480
-    if (480 <= player_x <= 720 and 270 <= player_y <= 330) and player_x - 1 >= 720:
+    if (530 <= player_x <= 670 and 270 <= player_y <= 330) and player_x - 1 >= 720:
         player_x = 720
 
-    if (280 <= player_x <= 520 and 170 <= player_y <= 200) and player_y + 1 >= 170:
+    # Platform 2 Y collisions
+    if (305 <= player_x <= 495 and 170 <= player_y <= 200) and player_y + 1 >= 170:
         player_y = 170
-    if (280 <= player_x <= 520 and 200 <= player_y <= 230) and player_y - 1 <= 230:
+    if (305 <= player_x <= 495 and 200 <= player_y <= 230) and player_y - 1 <= 230:
         player_y = 230
         on_plat = True
-    else:
-        on_plat = False
 
-    if (280 <= player_x <= 520 and 170 <= player_y <= 230) and player_x + 1 <= 280:
+    # Platform 2 X collisions
+    if (305 <= player_x <= 495 and 170 <= player_y <= 230) and player_x + 1 <= 280:
         player_x = 280
-    if (280 <= player_x <= 520 and 170 <= player_y <= 230) and player_x - 1 >= 520:
+    if (305 <= player_x <= 495 and 170 <= player_y <= 230) and player_x - 1 >= 520:
         player_x = 520
 
+    # Platform 1 Y collisions
     if (80 <= player_x <= 320 and 70 <= player_y <= 100) and player_y + 1 >= 70:
         player_y = 70
     if (80 <= player_x <= 320 and 100 <= player_y <= 130) and player_y - 1 <= 130:
         player_y = 130
         on_plat = True
-    else:
-        on_plat = False
 
+    # Platform 1 X collisions
     if (80 <= player_x <= 320 and 70 <= player_y <= 130) and player_x + 1 <= 80:
         player_x = 80
     if (80 <= player_x <= 320 and 70 <= player_y <= 130) and player_x - 1 >= 320:
         player_x = 320
 
 
-'''
-for i in range(len(amount_of_plats):
-    if (left_edge <= player_x <= right_edge and bottom_plat <= player_y <= top_plat) and player_y + 1 >= bottom_plat:
-        player_y = bottom_plat
-'''
+def level_2_platforms():
+    pass
 
 
 def jumped():
@@ -112,7 +122,7 @@ def jumped():
         jumping = True
 
     if jumping:
-        player_y += 8
+        player_y += 7
         velocity += gravity
         player_y -= velocity
         if velocity >= 20:
@@ -122,15 +132,54 @@ def jumped():
         velocity = 0
         jumping = False
 
+    if not on_plat and not jumping:
+        velocity += 0.2
+        velocity += gravity
+        player_y -= velocity
+        if velocity >= 20:
+            velocity = 20
+
+
+def end_goal():
+    global victory
+    if (594 <= player_x <= 656) and (305 <= player_y <= 430):
+        victory = True
+
+
+def camera():
+    global cam_vars
+
+    arcade.set_viewport(cam_vars[0],
+                        cam_vars[1],
+                        cam_vars[2],
+                        cam_vars[3])
+
 
 def on_draw():
-    global player_x, player_y
+    global player_x, player_y, victory
     arcade.start_render()
+
+    # Platforms
+    arcade.draw_rectangle_filled(600, 300, 100, 10, arcade.color.BLACK)
+    arcade.draw_rectangle_filled(400, 200, 150, 10, arcade.color.BLACK)
+    arcade.draw_rectangle_filled(200, 100, 200, 10, arcade.color.BLACK)
+
+    # Victory flag
+    arcade.draw_rectangle_filled(625, 355, 12, 100, arcade.color.DARK_BROWN)
+    arcade.draw_triangle_filled(631, 405, 631, 360, 671, 382.5, arcade.color.BANANA_YELLOW)
+
+    # Character
     arcade.draw_circle_filled(player_x, player_y, 25, arcade.color.RED)
 
-    arcade.draw_rectangle_filled(600, 300, 200, 10, arcade.color.BLACK)
-    arcade.draw_rectangle_filled(400, 200, 200, 10, arcade.color.BLACK)
-    arcade.draw_rectangle_filled(200, 100, 200, 10, arcade.color.BLACK)
+    endgame_text = "Congratulations!"
+    endgame_text_2 = "You Won!"
+    endgame_text_3 = "Click anywhere to continue"
+
+    if victory:
+        arcade.draw_rectangle_filled(400, 300, 350, 250, arcade.color.BATTLESHIP_GREY)
+        arcade.draw_text(endgame_text, 290, 390, arcade.color.YELLOW_GREEN, 20)
+        arcade.draw_text(endgame_text_2, 340, 350, arcade.color.YELLOW_GREEN, 20)
+        arcade.draw_text(endgame_text_3, 240, 200, arcade.color.PINK_LAVENDER, 18)
 
 
 def on_key_press(key, something):
@@ -157,6 +206,15 @@ def on_key_release(key, something):
         left_pressed = False
 
 
+def on_mouse_press(x, y, something, something_2):
+    global victory, level_1, level_2
+
+    if victory:
+        if 0 <= x <= 800 and 0 <= y <= 600:
+            if level_1:
+                level_2 = True
+
+
 def setup():
     arcade.open_window(WIDTH, HEIGHT, "Final Project")
     arcade.set_background_color(arcade.color.BLUE_GRAY)
@@ -166,6 +224,7 @@ def setup():
     window.on_draw = on_draw
     window.on_key_press = on_key_press
     window.on_key_release = on_key_release
+    window.on_mouse_press = on_mouse_press
 
     arcade.run()
 

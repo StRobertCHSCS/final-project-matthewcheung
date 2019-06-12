@@ -43,11 +43,10 @@ def on_update(delta_time):
     if level_1:
         level_1_platforms()
     if level_2:
-        cam_vars[0] += 5
-        cam_vars[1] += 5
-        if cam_vars[0] >= 1600:
-            cam_vars[0] += 0
-            cam_vars[1] += 0
+        if not cam_vars[0] >= 1600:
+            cam_vars[0] += 5
+            cam_vars[1] += 5
+
         level_2_platforms()
 
     end_goal()

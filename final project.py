@@ -4,15 +4,16 @@ import arcade
 WIDTH = 800
 HEIGHT = 600
 
-# Starting position
-player_x = 25
-player_y = 25
-
 # Variables to record if certain keys are being pressed.
 up_pressed = False
 down_pressed = False
 left_pressed = False
 right_pressed = False
+
+player_x = 0
+player_y = 0
+one_start = False
+two_start = False
 
 # Gravity variables
 velocity = 0
@@ -30,26 +31,16 @@ cam_vars = [0, 800, 0, 600]
 
 
 def on_update(delta_time):
-    global up_pressed, down_pressed, right_pressed, left_pressed, player_x, player_y, velocity, gravity
-    if down_pressed:
-        player_y -= 5
+    global up_pressed, down_pressed, right_pressed, left_pressed, player_x, player_y
+
     if right_pressed:
         player_x += 5
     if left_pressed:
         player_x -= 5
 
-    jumped()
-
-    if level_1:
-        level_1_platforms()
-    if level_2:
-        if not cam_vars[0] >= 1600:
-            cam_vars[0] += 5
-            cam_vars[1] += 5
-
-        level_2_platforms()
-
+    player_start()
     end_goal()
+    jumped()
     camera()
 
 
@@ -67,10 +58,12 @@ def level_1_platforms():
 
     if player_x - 1 <= 25:
         player_x = 25
+
     if player_x + 1 >= 775:
         player_x = 775
 
     # Platform collisions
+
     # Platform 3 Y collisions
     if (530 <= player_x <= 670 and 270 <= player_y <= 300) and player_y + 1 >= 270:
         player_y = 270
@@ -112,7 +105,22 @@ def level_1_platforms():
 
 
 def level_2_platforms():
-    pass
+    global player_x, player_y, on_plat
+
+    # Stops player from leaving the screen
+    if player_y + 1 >= 1275:
+        player_y = 1275
+    if player_y - 1 <= 25:
+        player_y = 25
+        on_plat = True
+    else:
+        on_plat = False
+
+    if player_x - 1 <= 725:
+        player_x = 725
+
+    if player_x + 1 >= 1475:
+        player_x = 1475
 
 
 def jumped():
@@ -141,9 +149,21 @@ def jumped():
 
 
 def end_goal():
-    global victory
+    global victory, level_1, level_2
     if (594 <= player_x <= 656) and (305 <= player_y <= 430):
         victory = True
+
+    if level_1 and not level_2:
+        level_1_platforms()
+
+    if level_2:
+        level_1 = False
+        if not cam_vars[0] >= 700:
+            cam_vars[0] += 5
+            cam_vars[1] += 5
+
+        if cam_vars[0] == 700:
+            level_2_platforms()
 
 
 def camera():
@@ -155,8 +175,21 @@ def camera():
                         cam_vars[3])
 
 
+def player_start():
+    global player_x, player_y, one_start, two_start
+
+    if level_1 and not level_2 and not one_start:
+        player_x = 25
+        player_y = 25
+        one_start = True
+    if level_2 and not two_start:
+        player_x = 775
+        player_y = 25
+        two_start = True
+
+
 def on_draw():
-    global player_x, player_y, victory
+    global player_x, player_y, victory, level_1, level_2
     arcade.start_render()
 
     # Platforms
@@ -169,7 +202,10 @@ def on_draw():
     arcade.draw_triangle_filled(631, 405, 631, 360, 671, 382.5, arcade.color.BANANA_YELLOW)
 
     # Character
-    arcade.draw_circle_filled(player_x, player_y, 25, arcade.color.RED)
+    if level_1:
+        arcade.draw_circle_filled(player_x, player_y, 25, arcade.color.RED)
+    if level_2:
+        arcade.draw_circle_filled(player_x, player_y, 25, arcade.color.RED)
 
     endgame_text = "Congratulations!"
     endgame_text_2 = "You Won!"

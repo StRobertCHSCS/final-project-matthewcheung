@@ -24,8 +24,14 @@ jumping = False
 victory = False
 level_1 = True
 level_2 = False
+level_3 = False
+
 one_start = False
 two_start = False
+three_start = False
+
+l2_plats = False
+l3_plats = False
 
 # Camera variables
 cam_vars = [0, 800, 0, 600]
@@ -39,11 +45,13 @@ m_up = True
 def on_update(delta_time):
     global up_pressed, down_pressed, right_pressed, left_pressed, player_x, player_y
 
+    # Left right movement
     if right_pressed:
         player_x += 5
     if left_pressed:
         player_x -= 5
 
+    # Calling all functions
     player_start()
     end_goal()
     jumped()
@@ -51,9 +59,9 @@ def on_update(delta_time):
 
 
 def player_start():
-    global player_x, player_y, one_start, two_start
+    global player_x, player_y, one_start, two_start, three_start
 
-    if level_1 and not level_2 and not one_start:
+    if level_1 and not one_start:
         player_x = 25
         player_y = 25
         one_start = True
@@ -61,15 +69,20 @@ def player_start():
         player_x = 725
         player_y = 25
         two_start = True
+    if level_3 and not three_start:
+        player_x = 1425
+        player_y = 25
+        three_start = True
 
 
 def end_goal():
     global victory, level_1, level_2
-    if (594 <= player_x <= 656) and (305 <= player_y <= 430):
-        victory = True
 
-    if level_1 and not level_2:
+    if level_1:
         level_1_platforms()
+
+        if (594 <= player_x <= 656) and (305 <= player_y <= 430):
+            victory = True
 
     if level_2:
         level_1 = False
@@ -79,6 +92,21 @@ def end_goal():
 
         if cam_vars[0] == 700:
             level_2_platforms()
+
+        if (1294 <= player_x <= 1356) and (305 <= player_y <= 430):
+            victory = True
+
+    if level_3:
+        level_2 = False
+        if not cam_vars[0] >= 1400:
+            cam_vars[0] += 5
+            cam_vars[1] += 5
+
+        if cam_vars[0] == 1400:
+            level_3_platforms()
+
+        if (1994 <= player_x <= 2056) and (305 <= player_y <= 430):
+            victory = True
 
 
 def level_1_platforms():
@@ -155,11 +183,12 @@ def level_2_platforms():
 
     if player_x - 1 <= 725:
         player_x = 725
+
     if player_x + 1 >= 1475:
         player_x = 1475
 
     # Moving platform movements
-    if moving_plat[1] <= 25:
+    if moving_plat[1] <= 5:
         m_up = True
         m_down = False
     if moving_plat[1] >= 375:
@@ -172,6 +201,7 @@ def level_2_platforms():
         moving_plat[1] -= 2.5
 
     # Platform collisions
+
     # Moving platform collisions
     if ((900 <= player_x <= 1100 and moving_plat[1] <= player_y <= moving_plat[1] + 30)
             and player_y + 1 <= moving_plat[1] + 30 and m_up):
@@ -182,18 +212,40 @@ def level_2_platforms():
         player_y = moving_plat[1] + 30
         on_plat = True
 
+    if ((900 <= player_x <= 1100 and moving_plat[1] - 30 <= player_y <= moving_plat[1])
+            and player_y + 1 >= moving_plat[1] - 30):
+        player_y = moving_plat[1] - 30
+
     # Platform 3 Y collisions
-    if (530 <= player_x <= 670 and 270 <= player_y <= 300) and player_y + 1 >= 270:
+    if (1230 <= player_x <= 1370 and 270 <= player_y <= 300) and player_y + 1 >= 270:
         player_y = 270
-    if (530 <= player_x <= 670 and 300 <= player_y <= 330) and player_y - 1 <= 330:
+    if (1230 <= player_x <= 1370 and 300 <= player_y <= 330) and player_y - 1 <= 330:
         player_y = 330
         on_plat = True
 
     # Platform 3 X collisions
-    if (530 <= player_x <= 670 and 270 <= player_y <= 330) and player_x + 1 <= 480:
-        player_x = 480
-    if (530 <= player_x <= 670 and 270 <= player_y <= 330) and player_x - 1 >= 720:
-        player_x = 720
+    if (1230 <= player_x <= 1370 and 270 <= player_y <= 330) and player_x + 1 <= 1180:
+        player_x = 1180
+    if (1230 <= player_x <= 1370 and 270 <= player_y <= 330) and player_x - 1 >= 1420:
+        player_x = 1420
+
+
+def level_3_platforms():
+    global player_y, player_x, on_plat
+
+    # Stops player from leaving the screen
+    if player_y + 1 >= 1975:
+        player_y = 1975
+    if player_y - 1 <= 25:
+        player_y = 25
+        on_plat = True
+    else:
+        on_plat = False
+
+    if player_x - 1 <= 1425:
+        player_x = 1425
+    if player_x + 1 >= 2175:
+        player_x = 2175
 
 
 def jumped():
@@ -231,7 +283,7 @@ def camera():
 
 
 def on_draw():
-    global player_x, player_y, victory, level_1, level_2, cam_vars, moving_plat
+    global player_x, player_y, victory, level_1, level_2, cam_vars, moving_plat, l2_plats, l3_plats
     arcade.start_render()
 
     # Draws level 1 platforms
@@ -241,20 +293,35 @@ def on_draw():
 
     # Draws level 2 platforms
     if level_2 and cam_vars[0] == 700:
+        l2_plats = True
+    if l2_plats:
         arcade.draw_rectangle_filled(moving_plat[0],
                                      moving_plat[1],
                                      moving_plat[2],
                                      moving_plat[3], arcade.color.BLACK)
         arcade.draw_rectangle_filled(1300, 300, 100, 10, arcade.color.BLACK)
 
-    # Victory flag
+    # Draws level 3 platforms
+    if level_3 and cam_vars[0] == 1400:
+        l3_plats = True
+    if l3_plats:
+        arcade.draw_rectangle_filled(2000, 300, 100, 10, arcade.color.BLACK)
+
+    # Victory flag level 1
     arcade.draw_rectangle_filled(625, 355, 12, 100, arcade.color.DARK_BROWN)
     arcade.draw_triangle_filled(631, 405, 631, 360, 671, 382.5, arcade.color.BANANA_YELLOW)
+
+    # Victory flag level 2
+    if level_2 and cam_vars[0] == 700:
+        arcade.draw_rectangle_filled(1325, 355, 12, 100, arcade.color.DARK_BROWN)
+        arcade.draw_triangle_filled(1331, 405, 1331, 360, 1371, 382.5, arcade.color.BANANA_YELLOW)
 
     # Character
     if level_1:
         arcade.draw_circle_filled(player_x, player_y, 25, arcade.color.RED)
     if level_2 and cam_vars[0] == 700:
+        arcade.draw_circle_filled(player_x, player_y, 25, arcade.color.RED)
+    if level_3 and cam_vars[0] == 1400:
         arcade.draw_circle_filled(player_x, player_y, 25, arcade.color.RED)
 
     endgame_text = "Congratulations!"
@@ -262,10 +329,17 @@ def on_draw():
     endgame_text_3 = "Click anywhere to continue"
 
     if victory:
-        arcade.draw_rectangle_filled(400, 300, 350, 250, arcade.color.BATTLESHIP_GREY)
-        arcade.draw_text(endgame_text, 290, 390, arcade.color.YELLOW_GREEN, 20)
-        arcade.draw_text(endgame_text_2, 340, 350, arcade.color.YELLOW_GREEN, 20)
-        arcade.draw_text(endgame_text_3, 240, 200, arcade.color.PINK_LAVENDER, 18)
+        if level_1:
+            arcade.draw_rectangle_filled(400, 300, 350, 250, arcade.color.BATTLESHIP_GREY)
+            arcade.draw_text(endgame_text, 290, 390, arcade.color.YELLOW_GREEN, 20)
+            arcade.draw_text(endgame_text_2, 340, 350, arcade.color.YELLOW_GREEN, 20)
+            arcade.draw_text(endgame_text_3, 240, 200, arcade.color.PINK_LAVENDER, 18)
+
+        if level_2:
+            arcade.draw_rectangle_filled(1100, 300, 350, 250, arcade.color.BATTLESHIP_GREY)
+            arcade.draw_text(endgame_text, 990, 390, arcade.color.YELLOW_GREEN, 20)
+            arcade.draw_text(endgame_text_2, 1040, 350, arcade.color.YELLOW_GREEN, 20)
+            arcade.draw_text(endgame_text_3, 940, 200, arcade.color.PINK_LAVENDER, 18)
 
 
 def on_key_press(key, something):
@@ -293,12 +367,17 @@ def on_key_release(key, something):
 
 
 def on_mouse_press(x, y, something, something_2):
-    global victory, level_1, level_2
+    global victory, level_1, level_2, level_3
 
-    if victory:
+    if victory and level_1:
         if 0 <= x <= 800 and 0 <= y <= 600:
-            if level_1:
-                level_2 = True
+            level_2 = True
+            victory = False
+
+    if victory and level_2:
+        if 0 <= x <= 800 and 0 <= y <= 600:
+            level_3 = True
+            victory = False
 
 
 def setup():

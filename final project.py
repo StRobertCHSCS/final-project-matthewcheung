@@ -25,10 +25,12 @@ victory = False
 level_1 = True
 level_2 = False
 level_3 = False
+level_4 = False
 
 one_start = False
 two_start = False
 three_start = False
+four_start = False
 
 l2_plats = False
 l3_plats = False
@@ -247,6 +249,19 @@ def level_3_platforms():
     if player_x + 1 >= 2175:
         player_x = 2175
 
+    # Platform 3 Y collisions
+    if (1230 <= player_x <= 1370 and 270 <= player_y <= 300) and player_y + 1 >= 270:
+        player_y = 270
+    if (1230 <= player_x <= 1370 and 300 <= player_y <= 330) and player_y - 1 <= 330:
+        player_y = 330
+        on_plat = True
+
+    # Platform 3 X collisions
+    if (1230 <= player_x <= 1370 and 270 <= player_y <= 330) and player_x + 1 <= 1180:
+        player_x = 1180
+    if (1230 <= player_x <= 1370 and 270 <= player_y <= 330) and player_x - 1 >= 1420:
+        player_x = 1420
+
 
 def jumped():
     global on_plat, velocity, player_y, jumping
@@ -367,7 +382,7 @@ def on_key_release(key, something):
 
 
 def on_mouse_press(x, y, something, something_2):
-    global victory, level_1, level_2, level_3
+    global victory, level_1, level_2, level_3, level_4
 
     if victory and level_1:
         if 0 <= x <= 800 and 0 <= y <= 600:
@@ -377,6 +392,11 @@ def on_mouse_press(x, y, something, something_2):
     if victory and level_2:
         if 0 <= x <= 800 and 0 <= y <= 600:
             level_3 = True
+            victory = False
+
+    if victory and level_3:
+        if 0 <= x <= 800 and 0 <= y <= 600:
+            level_4 = True
             victory = False
 
 

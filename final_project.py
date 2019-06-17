@@ -272,21 +272,39 @@ def level_3_platforms():
     # Switching platform collisions
     if red_plat:
         # Lower red plat collisions
-        if (1570 <= player_x <= 1825 and 40 <= player_y <= 70) and player_y + 1 >= 40:
+        if (1575 <= player_x <= 1825 and 40 <= player_y <= 70) and player_y + 1 >= 40:
             player_y = 40
-        if (1570 <= player_x <= 1825 and 70 <= player_y <= 100) and player_y - 1 <= 100:
+        if (1575 <= player_x <= 1825 and 70 <= player_y <= 100) and player_y - 1 <= 100:
             player_y = 100
             on_plat = True
 
-        if (1570 <= player_x <= 1825 and 40 <= player_y <= 100) and player_x + 1 <= 1570:
+        if (1575 <= player_x <= 1825 and 40 <= player_y <= 100) and player_x + 1 <= 1570:
             player_x = 1570
-        if (1570 <= player_x <= 1825 and 40 <= player_y <= 100) and player_y - 1 >= 1830:
+        if (1575 <= player_x <= 1825 and 40 <= player_y <= 100) and player_y - 1 >= 1830:
             player_x = 1830
 
         # Higher red plat collisions
-        if (1470 <= player_x <= 1730):
-            pass
-
+        if (1475 <= player_x <= 1725 and 200 <= player_y <= 230) and player_y + 1 >= 200:
+            player_y = 200
+        if (1475 <= player_x <= 1725 and 230 <= player_y <= 260) and player_y + 1 <= 260:
+            player_y = 260
+        
+        if (1475 <= player_x <= 1725 and 200 <= player_y <= 260) and player_x + 1 <= 1470:
+            player_x = 1470
+        if (1475 <= player_x <= 1725 and 200 <= player_y <= 260) and player_x - 1 >= 1730:
+            player_x = 1730
+    
+    if blue_plat:
+        # Lower blue plat collisions
+        if (1800 <= player_x <= 2000 and 120 <= player_y <= 150) and player_y + 1 >= 120:
+            player_y = 120
+        if (1800 <= player_x <= 2000 and 150 <= player_y <= 180) and player_y - 1 <= 180:
+            player_y = 180
+        
+        if (1800 <= player_x <= 2000 and 120 <= player_y <= 180) and player_x + 1 <= 1800:
+            player_x = 1800
+        if (1800 <= player_x <= 2000 and 120 <= player_y <= 180) and player_x - 1 >= 2000:
+            player_x = 2000
 
     '''
     arcade.draw_rectangle_outline(1700, 70, 200, 10, arcade.color.RED)
@@ -350,6 +368,9 @@ def on_draw():
     arcade.draw_rectangle_filled(600, 300, 100, 10, arcade.color.BLACK)
     arcade.draw_rectangle_filled(400, 200, 150, 10, arcade.color.BLACK)
     arcade.draw_rectangle_filled(200, 100, 200, 10, arcade.color.BLACK)
+    # Victory flag level 1
+    arcade.draw_rectangle_filled(625, 355, 12, 100, arcade.color.DARK_BROWN)
+    arcade.draw_triangle_filled(631, 405, 631, 360, 671, 382.5, arcade.color.BANANA_YELLOW)
 
     # Draws level 2 platforms
     if level_2 and cam_vars[0] == 700:
@@ -360,6 +381,9 @@ def on_draw():
                                      moving_plat[2],
                                      moving_plat[3], arcade.color.BLACK)
         arcade.draw_rectangle_filled(1300, 300, 100, 10, arcade.color.BLACK)
+        # Level 2 victory flag
+        arcade.draw_rectangle_filled(1325, 355, 12, 100, arcade.color.DARK_BROWN)
+        arcade.draw_triangle_filled(1331, 405, 1331, 360, 1371, 382.5, arcade.color.BANANA_YELLOW)
 
     # Draws level 3 platforms
     if level_3 and cam_vars[0] == 1400:
@@ -377,20 +401,11 @@ def on_draw():
         arcade.draw_rectangle_outline(1700, 70, 200, 10, arcade.color.RED)
         arcade.draw_rectangle_outline(1600, 230, 100, 10, arcade.color.RED)
         arcade.draw_rectangle_outline(1900, 150, 150, 10, arcade.color.BLUE)
-
-    # Victory flag level 1
-    arcade.draw_rectangle_filled(625, 355, 12, 100, arcade.color.DARK_BROWN)
-    arcade.draw_triangle_filled(631, 405, 631, 360, 671, 382.5, arcade.color.BANANA_YELLOW)
-
-    # Victory flag level 2
-    if level_2 and cam_vars[0] == 700:
-        arcade.draw_rectangle_filled(1325, 355, 12, 100, arcade.color.DARK_BROWN)
-        arcade.draw_triangle_filled(1331, 405, 1331, 360, 1371, 382.5, arcade.color.BANANA_YELLOW)
-    # Victory flag level 2
-    if level_3 and cam_vars[0] == 1400:
+        
+        # Level 3 victory flag
         arcade.draw_rectangle_filled(2025, 355, 12, 100, arcade.color.DARK_BROWN)
         arcade.draw_triangle_filled(2031, 405, 2031, 360, 2071, 382.5, arcade.color.BANANA_YELLOW)
-
+      
     # Character
     if level_1:
         arcade.draw_circle_filled(player_x, player_y, 25, arcade.color.RED)

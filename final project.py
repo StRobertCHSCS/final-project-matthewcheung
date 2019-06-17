@@ -1,6 +1,6 @@
 import arcade
 
-
+# Screen variables
 WIDTH = 800
 HEIGHT = 600
 
@@ -42,6 +42,12 @@ cam_vars = [0, 800, 0, 600]
 moving_plat = [1000, 100, 150, 10]
 m_down = False
 m_up = True
+
+# Level 3 variables
+blue_plat = False
+red_plat = True
+switch_timer = 0
+switch_counter = 0
 
 
 def on_update(delta_time):
@@ -218,14 +224,14 @@ def level_2_platforms():
             and player_y + 1 >= moving_plat[1] - 30):
         player_y = moving_plat[1] - 30
 
-    # Platform 3 Y collisions
+    # Platform 2 Y collisions
     if (1230 <= player_x <= 1370 and 270 <= player_y <= 300) and player_y + 1 >= 270:
         player_y = 270
     if (1230 <= player_x <= 1370 and 300 <= player_y <= 330) and player_y - 1 <= 330:
         player_y = 330
         on_plat = True
 
-    # Platform 3 X collisions
+    # Platform 2 X collisions
     if (1230 <= player_x <= 1370 and 270 <= player_y <= 330) and player_x + 1 <= 1180:
         player_x = 1180
     if (1230 <= player_x <= 1370 and 270 <= player_y <= 330) and player_x - 1 >= 1420:
@@ -233,7 +239,7 @@ def level_2_platforms():
 
 
 def level_3_platforms():
-    global player_y, player_x, on_plat
+    global player_y, player_x, on_plat, switch_timer, switch_counter, red_plat, blue_plat
 
     # Stops player from leaving the screen
     if player_y + 1 >= 1975:
@@ -249,18 +255,57 @@ def level_3_platforms():
     if player_x + 1 >= 2175:
         player_x = 2175
 
+    # Alternating platform code
+    switch_timer += 1
+    if switch_timer >= 120:
+        switch_timer = 0
+        switch_counter += 1
+
+    if switch_counter % 2 == 0:
+        red_plat = True
+        blue_plat = False
+
+    if switch_counter % 2 == 1:
+        blue_plat = True
+        red_plat = False
+
+    # Switching platform collisions
+    if red_plat:
+        # Lower red plat collisions
+        if (1570 <= player_x <= 1825 and 40 <= player_y <= 70) and player_y + 1 >= 40:
+            player_y = 40
+        if (1570 <= player_x <= 1825 and 70 <= player_y <= 100) and player_y - 1 <= 100:
+            player_y = 100
+            on_plat = True
+
+        if (1570 <= player_x <= 1825 and 40 <= player_y <= 100) and player_x + 1 <= 1570:
+            player_x = 1570
+        if (1570 <= player_x <= 1825 and 40 <= player_y <= 100) and player_y - 1 >= 1830:
+            player_x = 1830
+
+        # Higher red plat collisions
+        if (1470 <= player_x <= 1730):
+            pass
+
+
+    '''
+    arcade.draw_rectangle_outline(1700, 70, 200, 10, arcade.color.RED)
+    arcade.draw_rectangle_outline(1600, 230, 100, 10, arcade.color.RED)
+    arcade.draw_rectangle_outline(1900, 150, 150, 10, arcade.color.BLUE)
+    '''
+
     # Platform 3 Y collisions
-    if (1230 <= player_x <= 1370 and 270 <= player_y <= 300) and player_y + 1 >= 270:
+    if (1930 <= player_x <= 2070 and 270 <= player_y <= 300) and player_y + 1 >= 270:
         player_y = 270
-    if (1230 <= player_x <= 1370 and 300 <= player_y <= 330) and player_y - 1 <= 330:
+    if (1930 <= player_x <= 2070 and 300 <= player_y <= 330) and player_y - 1 <= 330:
         player_y = 330
         on_plat = True
 
     # Platform 3 X collisions
-    if (1230 <= player_x <= 1370 and 270 <= player_y <= 330) and player_x + 1 <= 1180:
-        player_x = 1180
-    if (1230 <= player_x <= 1370 and 270 <= player_y <= 330) and player_x - 1 >= 1420:
-        player_x = 1420
+    if (1930 <= player_x <= 2070 and 270 <= player_y <= 330) and player_x + 1 <= 1930:
+        player_x = 1930
+    if (1930 <= player_x <= 2070 and 270 <= player_y <= 330) and player_x - 1 >= 2070:
+        player_x = 2070
 
 
 def jumped():
@@ -321,6 +366,17 @@ def on_draw():
         l3_plats = True
     if l3_plats:
         arcade.draw_rectangle_filled(2000, 300, 100, 10, arcade.color.BLACK)
+        # Draws platforms with collisions
+        if red_plat:
+            arcade.draw_rectangle_filled(1700, 70, 200, 10, arcade.color.RED)
+            arcade.draw_rectangle_filled(1600, 230, 100, 10, arcade.color.RED)
+        if blue_plat:
+            arcade.draw_rectangle_filled(1900, 150, 150, 10, arcade.color.BLUE)
+
+        # Draws outline of non-collision platforms
+        arcade.draw_rectangle_outline(1700, 70, 200, 10, arcade.color.RED)
+        arcade.draw_rectangle_outline(1600, 230, 100, 10, arcade.color.RED)
+        arcade.draw_rectangle_outline(1900, 150, 150, 10, arcade.color.BLUE)
 
     # Victory flag level 1
     arcade.draw_rectangle_filled(625, 355, 12, 100, arcade.color.DARK_BROWN)
@@ -330,6 +386,10 @@ def on_draw():
     if level_2 and cam_vars[0] == 700:
         arcade.draw_rectangle_filled(1325, 355, 12, 100, arcade.color.DARK_BROWN)
         arcade.draw_triangle_filled(1331, 405, 1331, 360, 1371, 382.5, arcade.color.BANANA_YELLOW)
+    # Victory flag level 2
+    if level_3 and cam_vars[0] == 1400:
+        arcade.draw_rectangle_filled(2025, 355, 12, 100, arcade.color.DARK_BROWN)
+        arcade.draw_triangle_filled(2031, 405, 2031, 360, 2071, 382.5, arcade.color.BANANA_YELLOW)
 
     # Character
     if level_1:
